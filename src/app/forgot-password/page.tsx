@@ -7,8 +7,9 @@ import { Mail, ArrowLeft, Send } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { requestPasswordReset } from "@/app/auth/actions";
 import { Navbar } from "@/components/Navbar";
+import { Suspense } from "react";
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordForm() {
     const searchParams = useSearchParams();
     const message = searchParams.get("message");
 
@@ -83,5 +84,26 @@ export default function ForgotPasswordPage() {
                 </motion.div>
             </div>
         </main>
+    );
+}
+
+export default function ForgotPasswordPage() {
+    return (
+        <Suspense fallback={
+            <main className="min-h-screen bg-background flex flex-col">
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center p-6 pt-32">
+                    <div className="w-full max-w-md glass p-10 rounded-[2.5rem]">
+                        <div className="animate-pulse">
+                            <div className="h-8 bg-gray-200 rounded mb-4"></div>
+                            <div className="h-4 bg-gray-200 rounded mb-8"></div>
+                            <div className="h-12 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        }>
+            <ForgotPasswordForm />
+        </Suspense>
     );
 }
