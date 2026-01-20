@@ -12,15 +12,16 @@ import { User } from "@supabase/supabase-js";
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
-  const supabase = createClient();
   
   const isLandingPage = pathname === "/";
 
   useEffect(() => {
+    // Only create Supabase client on the client side
+    const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
     });
-  }, [supabase]);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">

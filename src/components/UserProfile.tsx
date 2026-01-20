@@ -17,11 +17,13 @@ interface UserProfileData {
 export function UserProfile() {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
+        // Create Supabase client only on the client side
+        const supabase = createClient();
+        
         // First check if user is authenticated
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (authError || !user) {
@@ -46,7 +48,7 @@ export function UserProfile() {
     };
 
     fetchUserProfile();
-  }, [supabase]);
+  }, []);
 
   if (loading) {
     return (
