@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { 
     CheckSquare, 
     Filter, 
@@ -20,7 +21,7 @@ export default function TasksPage() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('pending');
+    const [filter, setFilter] = useState<'all' | 'pending' | 'in-progress' | 'completed'>('pending');
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
@@ -38,13 +39,34 @@ export default function TasksPage() {
         const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                              task.description?.toLowerCase().includes(searchQuery.toLowerCase());
         
-        if (filter === 'pending') return matchesSearch && task.status !== 'Completed';
+        if (filter === 'pending') return matchesSearch && task.status === 'Pending';
+        if (filter === 'in-progress') return matchesSearch && task.status === 'In Progress';
         if (filter === 'completed') return matchesSearch && task.status === 'Completed';
         return matchesSearch;
     });
 
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-10">
+            {/* Prominent Centered Logo */}
+            <div className="flex justify-center mb-8">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="group"
+                >
+                    <div className="relative">
+                        <Image 
+                            src="/Logo-pages.png" 
+                            alt="Manage Your Business Here Logo" 
+                            width={160} 
+                            height={160} 
+                            className="rounded-3xl shadow-2xl shadow-primary/60 group-hover:scale-105 transition-transform duration-300" 
+                        />
+                        <div className="absolute inset-0 rounded-3xl bg-primary/40 blur-3xl -z-10"></div>
+                    </div>
+                </motion.div>
+            </div>
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
@@ -93,6 +115,12 @@ export default function TasksPage() {
                         className={`flex-1 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition-all ${filter === 'pending' ? 'bg-white text-[#0F172A] shadow-sm' : 'text-[#0F172A]/40 hover:text-[#0F172A]/60'}`}
                     >
                         To Do
+                    </button>
+                    <button 
+                        onClick={() => setFilter('in-progress')}
+                        className={`flex-1 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition-all ${filter === 'in-progress' ? 'bg-white text-[#0F172A] shadow-sm' : 'text-[#0F172A]/40 hover:text-[#0F172A]/60'}`}
+                    >
+                        In Progress
                     </button>
                     <button 
                         onClick={() => setFilter('completed')}

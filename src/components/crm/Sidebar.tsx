@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -44,11 +43,7 @@ export function Sidebar() {
 
     return (
         <div className="fixed left-6 top-6 bottom-6 w-64 glass rounded-[2.5rem] flex flex-col p-6 border-primary/10 shadow-2xl overflow-hidden">
-            {/* Logo Section */}
-            <Link href="/" className="mb-10 px-2 flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                <Image src="/Logo.png" alt="Logo" width={40} height={40} className="rounded-xl shadow-lg shadow-primary/20" />
-                <span className="font-extrabold text-[#0F172A] tracking-tight text-lg">Manage Your Business Here</span>
-            </Link>
+
 
             {/* Navigation */}
             <nav className="flex-1 space-y-2">

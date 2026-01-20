@@ -14,6 +14,7 @@ import {
     Loader2
 } from "lucide-react";
 import { Task, TaskStatus, updateTaskStatus, deleteTask } from "@/app/dashboard/tasks/actions";
+import { ViewTaskModal } from "./ViewTaskModal";
 
 interface TaskListProps {
     tasks: Task[];
@@ -24,13 +25,21 @@ interface TaskListProps {
 
 export function TaskList({ tasks, onRefresh, showAddButton, onAddClick }: TaskListProps) {
     const [updatingId, setUpdatingId] = useState<string | null>(null);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
-    const handleToggleStatus = async (task: Task) => {
-        setUpdatingId(task.id);
-        const newStatus: TaskStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
-        const result = await updateTaskStatus(task.id, newStatus);
-        setUpdatingId(null);
-        if (result.success && onRefresh) onRefresh();
+    const handleTaskClick = (task: Task) => {
+        setSelectedTask(task);
+        setIsViewModalOpen(true);
+    };
+
+    const handleCloseViewModal = () => {
+        setIsViewModalOpen(false);
+        setSelectedTask(null);
+    };
+
+    const handleRefresh = () => {
+        if (onRefresh) onRefresh();
     };
 
     const handleDelete = async (id: string) => {
@@ -68,72 +77,91 @@ export function TaskList({ tasks, onRefresh, showAddButton, onAddClick }: TaskLi
                     <p className="text-[#0F172A]/40 font-bold text-sm">No tasks assigned yet</p>
                 </div>
             ) : (
-                <div className="space-y-3">
-                    <AnimatePresence mode="popLayout">
-                        {tasks.map((task) => (
-                            <motion.div
-                                key={task.id}
-                                layout
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className={`group glass p-4 rounded-3xl border transition-all flex items-start space-x-4
-                                    ${task.status === 'Completed' ? 'bg-green-500/5 border-green-500/10' : 'bg-white/40 border-primary/5 hover:border-primary/20'}
-                                `}
-                            >
-                                <button 
-                                    onClick={() => handleToggleStatus(task)}
-                                    disabled={updatingId === task.id}
-                                    className="mt-1 shrink-0"
+                <>
+                    <div className="space-y-3">
+                        <AnimatePresence mode="popLayout">
+                            {tasks.map((task) => (
+                                <motion.div
+                                    key={task.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className={`group glass p-4 rounded-3xl border transition-all flex items-start space-x-4
+                                        ${task.status === 'Completed' ? 'bg-green-500/5 border-green-500/10' : 
+                                          task.status === 'In Progress' ? 'bg-blue-500/5 border-blue-500/10' : 
+                                          'bg-white/40 border-primary/5 hover:border-primary/20'}
+                                    `}
                                 >
-                                    {updatingId === task.id ? (
-                                        <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
-                                    ) : task.status === 'Completed' ? (
-                                        <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                    ) : (
-                                        <Circle className="w-5 h-5 text-[#0F172A]/20 group-hover:text-orange-500 transition-colors" />
-                                    )}
-                                </button>
-
-                                <div className="flex-1 min-w-0">
-                                    <p className={`font-bold text-sm truncate ${task.status === 'Completed' ? 'text-[#0F172A]/30 line-through' : 'text-[#0F172A]'}`}>
-                                        {task.title}
-                                    </p>
-                                    {task.description && (
-                                        <p className="text-xs text-[#0F172A]/50 mt-1 line-clamp-1">{task.description}</p>
-                                    )}
-                                    
-                                    <div className="flex flex-wrap items-center gap-2 mt-3">
-                                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-tight ${getPriorityColor(task.priority)}`}>
-                                            {task.priority}
-                                        </span>
-                                        
-                                        {task.due_date && (
-                                            <div className="flex items-center text-[10px] font-bold text-[#0F172A]/40">
-                                                <Calendar className="w-3 h-3 mr-1" />
-                                                {new Date(task.due_date).toLocaleDateString()}
-                                            </div>
+                                    <button 
+                                        onClick={() => handleTaskClick(task)}
+                                        disabled={updatingId === task.id}
+                                        className="mt-1 shrink-0 cursor-pointer"
+                                    >
+                                        {updatingId === task.id ? (
+                                            <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                                        ) : task.status === 'Completed' ? (
+                                            <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                        ) : task.status === 'In Progress' ? (
+                                            <Clock className="w-5 h-5 text-blue-500" />
+                                        ) : (
+                                            <Circle className="w-5 h-5 text-[#0F172A]/20 group-hover:text-orange-500 transition-colors" />
                                         )}
+                                    </button>
 
-                                        {task.assignee && (
-                                            <div className="flex items-center text-[10px] font-bold text-[#0F172A]/40">
-                                                <User className="w-3 h-3 mr-1" />
-                                                {task.assignee.full_name}
-                                            </div>
+                                    <div 
+                                        className="flex-1 min-w-0 cursor-pointer"
+                                        onClick={() => handleTaskClick(task)}
+                                    >
+                                        <p className={`font-bold text-sm truncate ${task.status === 'Completed' ? 'text-[#0F172A]/30 line-through' : 'text-[#0F172A]'}`}>
+                                            {task.title}
+                                            {task.status === 'In Progress' && (
+                                                <span className="ml-2 text-[10px] font-black text-blue-500 uppercase tracking-tight">• In Progress</span>
+                                            )}
+                                        </p>
+                                        {task.description && (
+                                            <p className="text-xs text-[#0F172A]/50 mt-1 line-clamp-1">{task.description}</p>
                                         )}
                                     </div>
-                                </div>
+                                        
+                                        <div className="flex flex-wrap items-center gap-2 mt-3">
+                                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-tight ${getPriorityColor(task.priority)}`}>
+                                                {task.priority}
+                                            </span>
+                                            
+                                            {task.due_date && (
+                                                <div className="flex items-center text-[10px] font-bold text-[#0F172A]/40">
+                                                    <Calendar className="w-3 h-3 mr-1" />
+                                                    {new Date(task.due_date).toLocaleDateString()}
+                                                </div>
+                                            )}
 
-                                <button 
-                                    onClick={() => handleDelete(task.id)}
-                                    className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </button>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
-                </div>
+                                            {task.assignee && (
+                                                <div className="flex items-center text-[10px] font-bold text-[#0F172A]/40">
+                                                    <User className="w-3 h-3 mr-1" />
+                                                    {task.assignee.full_name}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                    <button 
+                                        onClick={() => handleDelete(task.id)}
+                                        className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+
+                    <ViewTaskModal 
+                        isOpen={isViewModalOpen}
+                        onClose={handleCloseViewModal}
+                        task={selectedTask}
+                        onRefresh={handleRefresh}
+                    />
+                </>
             )}
         </div>
     );

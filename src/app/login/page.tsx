@@ -41,8 +41,11 @@ export default function LoginPage() {
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-3xl rounded-full -z-10" />
 
                     <div className="flex flex-col items-center mb-10 text-center">
-                        <Link href="/" className="mb-6 hover:opacity-80 transition-opacity">
-                            <Image src="/Logo.png" alt="Logo" width={64} height={64} className="rounded-2xl shadow-xl shadow-primary/20" />
+                        <Link href="/" className="mb-6 hover:opacity-80 transition-opacity group">
+                            <div className="relative">
+                                <Image src="/Logo-pages.png" alt="Logo" width={72} height={72} className="rounded-2xl shadow-2xl shadow-primary/40 group-hover:scale-105 transition-transform duration-300" />
+                                <div className="absolute inset-0 rounded-2xl bg-primary/20 blur-xl -z-10"></div>
+                            </div>
                         </Link>
                         <h1 className="text-3xl font-extrabold text-[#0F172A] mb-2">
                             {isAdmin ? "Admin Portal" : "Welcome Back"}

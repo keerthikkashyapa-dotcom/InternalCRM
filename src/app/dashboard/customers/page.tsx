@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
     Plus,
     Search,
@@ -70,6 +71,26 @@ export default function CustomersPage() {
 
     return (
         <div className="space-y-8">
+            {/* Prominent Centered Logo */}
+            <div className="flex justify-center mb-8">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="group"
+                >
+                    <div className="relative">
+                        <Image 
+                            src="/Logo-pages.png" 
+                            alt="Manage Your Business Here Logo" 
+                            width={160} 
+                            height={160} 
+                            className="rounded-3xl shadow-2xl shadow-primary/60 group-hover:scale-105 transition-transform duration-300" 
+                        />
+                        <div className="absolute inset-0 rounded-3xl bg-primary/40 blur-3xl -z-10"></div>
+                    </div>
+                </motion.div>
+            </div>
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
