@@ -4,27 +4,16 @@ import { useState, Suspense } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
-import { Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { login } from "@/app/auth/actions";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 function LoginForm() {
-    const [isAdmin, setIsAdmin] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const searchParams = useSearchParams();
     const message = searchParams.get("message");
-
-    const fillDemo = (role: 'admin' | 'manager' | 'member') => {
-        const credentials = {
-            admin: { e: "admin@demo.com", p: "password123" },
-            manager: { e: "manager@demo.com", p: "password123" },
-            member: { e: "member@demo.com", p: "password123" }
-        };
-        setEmail(credentials[role].e);
-        setPassword(credentials[role].p);
-    };
 
     return (
         <main className="min-h-screen bg-background flex flex-col">
@@ -48,7 +37,7 @@ function LoginForm() {
                             </div>
                         </Link>
                         <h1 className="text-3xl font-extrabold text-[#0F172A] mb-2">
-                            {isAdmin ? "Admin Portal" : "Welcome Back"}
+                            Welcome Back
                         </h1>
                         <p className="text-[#0F172A]/50 text-sm">
                             Please enter your credentials to access the CRM
@@ -60,19 +49,6 @@ function LoginForm() {
                             {message}
                         </div>
                     )}
-
-                    {/* Demo Info */}
-                    <div className="mb-6 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-                        <div className="flex items-start gap-3">
-                            <ShieldCheck className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
-                            <div>
-                                <h4 className="text-sm font-bold text-indigo-700 mb-1">Demo Environment</h4>
-                                <p className="text-xs text-indigo-600 leading-relaxed">
-                                    Click on any demo user below to auto-fill credentials, or enter your own login details.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
                     <form action={login} className="space-y-6">
                         <div className="space-y-2">
@@ -121,79 +97,8 @@ function LoginForm() {
                         </motion.button>
                     </form>
 
-                    <div className="mt-8 pt-8 border-t border-[#0F172A]/5 space-y-4">
-                        {/* Demo Users Section */}
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-[#0F172A] text-center">Demo Users - Click to Login</h3>
-                            
-                            {/* Admin Demo */}
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => fillDemo('admin')}
-                                className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl cursor-pointer hover:bg-red-500/20 transition-all"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white font-bold">
-                                        👑
-                                    </div>
-                                    <div className="flex-1">
-                                        <h4 className="font-bold text-[#0F172A] text-sm">Admin User</h4>
-                                        <p className="text-xs text-[#0F172A]/60">admin@demo.com</p>
-                                        <p className="text-xs text-red-600 font-semibold">Full system access</p>
-                                    </div>
-                                    <div className="text-xs bg-red-500/20 text-red-700 px-2 py-1 rounded-full font-bold">
-                                        ADMIN
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                            {/* Manager Demo */}
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => fillDemo('manager')}
-                                className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl cursor-pointer hover:bg-orange-500/20 transition-all"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">
-                                        💼
-                                    </div>
-                                    <div className="flex-1">
-                                        <h4 className="font-bold text-[#0F172A] text-sm">Manager User</h4>
-                                        <p className="text-xs text-[#0F172A]/60">manager@demo.com</p>
-                                        <p className="text-xs text-orange-600 font-semibold">Team & deals management</p>
-                                    </div>
-                                    <div className="text-xs bg-orange-500/20 text-orange-700 px-2 py-1 rounded-full font-bold">
-                                        MANAGER
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                            {/* Team Member Demo */}
-                            <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => fillDemo('member')}
-                                className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl cursor-pointer hover:bg-green-500/20 transition-all"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white font-bold">
-                                        👥
-                                    </div>
-                                    <div className="flex-1">
-                                        <h4 className="font-bold text-[#0F172A] text-sm">Team Member</h4>
-                                        <p className="text-xs text-[#0F172A]/60">member@demo.com</p>
-                                        <p className="text-xs text-green-600 font-semibold">Tasks & customer access</p>
-                                    </div>
-                                    <div className="text-xs bg-green-500/20 text-green-700 px-2 py-1 rounded-full font-bold">
-                                        MEMBER
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </div>
-
-                        <div className="text-center space-y-4 pt-4 border-t border-[#0F172A]/5">
+                    <div className="mt-8 pt-8 border-t border-[#0F172A]/5">
+                        <div className="text-center space-y-4">
                             <p className="text-sm text-[#0F172A]/50">
                                 Don&apos;t have a workspace yet?
                             </p>
