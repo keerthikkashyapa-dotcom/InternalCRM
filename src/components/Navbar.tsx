@@ -11,20 +11,31 @@ import { User } from "@supabase/supabase-js";
 
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
+  const [envError, setEnvError] = useState<string | null>(null);
   const pathname = usePathname();
   
   const isLandingPage = pathname === "/";
 
   useEffect(() => {
     // Only create Supabase client on the client side
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-    });
+    try {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        setUser(user);
+      });
+    } catch (error) {
+      console.error('Supabase client error:', error);
+      setEnvError(error instanceof Error ? error.message : 'Unknown error');
+    }
   }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+      {envError && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <strong>Environment Error:</strong> {envError}
+        </div>
+      )}
       <div className="max-w-7xl mx-auto glass rounded-2xl px-6 py-3 flex items-center justify-between">
         <div className="flex-1"></div>
         <Link href="/" className="flex items-center space-x-4 hover:opacity-80 transition-opacity group mx-auto">
