@@ -1,30 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
-import { Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { login } from "@/app/auth/actions";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
-    const [isAdmin, setIsAdmin] = useState(false);
+function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const searchParams = useSearchParams();
     const message = searchParams.get("message");
-
-    const fillDemo = (role: 'admin' | 'manager' | 'member') => {
-        const credentials = {
-            admin: { e: "admin@demo.com", p: "password123" },
-            manager: { e: "manager@demo.com", p: "password123" },
-            member: { e: "member@demo.com", p: "password123" }
-        };
-        setEmail(credentials[role].e);
-        setPassword(credentials[role].p);
-    };
 
     return (
         <main className="min-h-screen bg-background flex flex-col">
@@ -48,7 +37,7 @@ export default function LoginPage() {
                             </div>
                         </Link>
                         <h1 className="text-3xl font-extrabold text-[#0F172A] mb-2">
-                            {isAdmin ? "Admin Portal" : "Welcome Back"}
+                            Welcome Back
                         </h1>
                         <p className="text-[#0F172A]/50 text-sm">
                             Please enter your credentials to access the CRM
@@ -70,7 +59,8 @@ export default function LoginPage() {
                                     name="email"
                                     type="email"
                                     required
-                                    defaultValue={email}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="name@company.com"
                                     className="w-full pl-12 pr-4 py-4 bg-white/40 border border-[#0F172A]/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-[#0F172A] placeholder:text-[#0F172A]/30"
                                 />
@@ -88,7 +78,8 @@ export default function LoginPage() {
                                     name="password"
                                     type="password"
                                     required
-                                    defaultValue={password}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     className="w-full pl-12 pr-4 py-4 bg-white/40 border border-[#0F172A]/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-[#0F172A] placeholder:text-[#0F172A]/30"
                                 />
@@ -106,9 +97,8 @@ export default function LoginPage() {
                         </motion.button>
                     </form>
 
-                    <div className="mt-8 pt-8 border-t border-[#0F172A]/5 space-y-4">
-
-                        <div className="text-center space-y-4 pt-4 border-t border-[#0F172A]/5">
+                    <div className="mt-8 pt-8 border-t border-[#0F172A]/5">
+                        <div className="text-center space-y-4">
                             <p className="text-sm text-[#0F172A]/50">
                                 Don&apos;t have a workspace yet?
                             </p>
@@ -127,5 +117,26 @@ export default function LoginPage() {
                 </motion.div>
             </div>
         </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <main className="min-h-screen bg-background flex flex-col">
+                <Navbar />
+                <div className="flex-1 flex items-center justify-center p-6 pt-32">
+                    <div className="w-full max-w-md glass p-10 rounded-[2.5rem]">
+                        <div className="animate-pulse">
+                            <div className="h-8 bg-gray-200 rounded mb-4"></div>
+                            <div className="h-4 bg-gray-200 rounded mb-8"></div>
+                            <div className="h-12 bg-gray-200 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        }>
+            <LoginForm />
+        </Suspense>
     );
 }

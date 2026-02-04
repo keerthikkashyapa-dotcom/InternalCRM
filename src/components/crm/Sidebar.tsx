@@ -12,7 +12,8 @@ import {
     Settings,
     LogOut,
     ChevronRight,
-    Users2
+    Users2,
+    Crown
 } from "lucide-react";
 import { logout } from "@/app/auth/actions";
 import { getProfile } from "@/app/dashboard/settings/actions";
@@ -39,6 +40,7 @@ export function Sidebar() {
         { icon: Briefcase, label: "Deals", href: "/dashboard/deals" },
         { icon: CheckSquare, label: "Tasks", href: "/dashboard/tasks" },
         ...(role === 'admin' || role === 'manager' ? [{ icon: Users2, label: "Team", href: "/dashboard/team" }] : []),
+        { icon: Crown, label: "Manager", href: "/dashboard/manager" },
     ];
 
     return (
